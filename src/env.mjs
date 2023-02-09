@@ -24,6 +24,7 @@ const server = z.object({
   DISCORD_CLIENT_SECRET: z.string(),
   LINE_CLIENT_ID: z.string(),
   LINE_CLIENT_SECRET: z.string(),
+  CLOUDFRONT_URL: z.string().url(),
 });
 
 /**
@@ -49,6 +50,7 @@ const processEnv = {
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   LINE_CLIENT_ID: process.env.LINE_CLIENT_ID,
   LINE_CLIENT_SECRET: process.env.LINE_CLIENT_SECRET,
+  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
@@ -70,7 +72,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
   if (parsed.success === false) {
     console.error(
       "❌ Invalid environment variables:",
-      parsed.error.flatten().fieldErrors,
+      parsed.error.flatten().fieldErrors
     );
     throw new Error("Invalid environment variables");
   }
@@ -86,7 +88,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
         throw new Error(
           process.env.NODE_ENV === "production"
             ? "❌ Attempted to access a server-side environment variable on the client"
-            : `❌ Attempted to access server-side environment variable '${prop}' on the client`,
+            : `❌ Attempted to access server-side environment variable '${prop}' on the client`
         );
       /*  @ts-ignore - can't type this properly in jsdoc */
       return target[prop];

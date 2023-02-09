@@ -1,4 +1,4 @@
-import { env } from "../../../env/server.mjs";
+import { env } from "../../../env.mjs";
 import { getMenuSchema } from "../../../schema/menu.schema";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
