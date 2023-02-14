@@ -1,14 +1,15 @@
 import Image from "next/image";
-import type { TMenu } from "../mock/menu";
+import { ImageProps } from "../pages/mock";
 
-const Recommend = ({ menus }: { menus: TMenu }) => {
+const Recommend = ({ menus }: { menus: ImageProps[] }) => {
   const first = menus[0]!;
   const second = menus[1]!;
   return (
     <>
       <div className="flex justify-between pt-4">
         <Image
-          src={first.image}
+          // src={first.image}
+          src="https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg&w=400&fit=max"
           alt={first.thaiName}
           width={120}
           height={120}

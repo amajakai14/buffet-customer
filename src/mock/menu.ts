@@ -6,7 +6,7 @@ export const menuType = {
   DRINKS: "drinks",
 };
 
-export type TMenu = typeof menus;
+export type TMenu = (typeof menus)[0];
 
 export const menus = [
   {
