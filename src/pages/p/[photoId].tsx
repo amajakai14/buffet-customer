@@ -1,11 +1,12 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { GetStaticProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { menus, TMenu } from "../../mock/menu";
 
-const Home: NextPage = () => {
+const Home = ({ currentMenu }: { currentMenu: TMenu | undefined }) => {
   const router = useRouter();
   const { photoId } = router.query;
-  let index = Number(photoId);
+  console.log(currentMenu);
 
   return (
     <>
@@ -13,7 +14,7 @@ const Home: NextPage = () => {
         <title>Menu selection</title>
       </Head>
       <main className="mx-auto p-4">
-        <Carousel currentPhoto={currentPhoto} index={index} />
+        <div>This page number {photoId}</div>
       </main>
     </>
   );
@@ -21,45 +22,28 @@ const Home: NextPage = () => {
 
 export default Home;
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const results = await getResults();
-
-  let reducedResults: ImageProps[] = [];
-  let i = 0;
-  for (let result of results.resources) {
-    reducedResults.push({
-      id: i,
-      height: result.height,
-      width: result.width,
-      public_id: result.public_id,
-      format: result.format,
-    });
-    i++;
-  }
-
-  const currentPhoto = reducedResults.find(
-    (img) => img.id === Number(context.params.photoId)
+export const getStaticProps: GetStaticProps = (context) => {
+  const photoId = context.params?.photoId;
+  console.log("photoId", photoId);
+  const currentMenu: TMenu | undefined = menus.find(
+    (menu) => menu.id === Number(photoId)
   );
-  currentPhoto.blurDataUrl = await getBase64ImageUrl(currentPhoto);
-
+  console.log(photoId);
   return {
     props: {
-      currentPhoto: currentPhoto,
+      currentMenu,
     },
   };
 };
 
-export async function getStaticPaths() {
-  const results = await cloudinary.v2.search
-    .expression(`folder:${process.env.CLOUDINARY_FOLDER}/*`)
-    .sort_by("public_id", "desc")
-    .max_results(400)
-    .execute();
+export function getStaticPaths() {
+  const results = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  ];
 
-  let fullPaths = [];
-  for (let i = 0; i < results.resources.length; i++) {
-    fullPaths.push({ params: { photoId: i.toString() } });
-  }
+  const fullPaths = results.map((result) => {
+    return { params: { photoId: String(result) } };
+  });
 
   return {
     paths: fullPaths,

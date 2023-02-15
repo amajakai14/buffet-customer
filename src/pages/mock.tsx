@@ -1,11 +1,12 @@
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import MainDish from "../components/MainDish";
-import Modal from "../components/Modal";
 import Recommend from "../components/Recommend";
 import Sidebar from "../components/Sidebar";
+import { env } from "../env.mjs";
 import { menus, menuType, TMenu } from "../mock/menu";
-import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
 
 // type of menu and add blurDataUrl property
 export interface ImageProps extends TMenu {
@@ -16,6 +17,7 @@ export interface ImageProps extends TMenu {
 const Mock = ({ images }: { images: ImageProps[] }) => {
   const router = useRouter();
   const { photoId } = router.query;
+  console.log(photoId);
   const [openModal, setOpenModal] = useState(false);
   if (!images) return <div>Not found</div>;
   const recommend = images.filter((menu) => menu.type === menuType.RECOMMEND);
@@ -26,11 +28,37 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
   return (
     <div>
       <Sidebar />
-      <Modal />
+      {/* <Modal /> */}
       <div className="ml-24 h-screen px-4 pt-5 text-sm font-light">
         <div>
           <div>Recommend</div>
           <Recommend menus={recommend} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-y-4 pt-5">
+          {mainDish.map((menu) => (
+            <Link
+              key={menu.id}
+              href={`/?photoId=${menu.id}`}
+              as={`/p/${menu.id}`}
+              shallow
+            >
+              <Image
+                src={menu.imageSrc}
+                alt={menu.thaiName}
+                width={102}
+                height={61}
+                className={`h-20 w-28 ${menu.available ? "" : "opacity-50"}`}
+                blurDataURL={menu.blurDataUrl}
+              />
+              <p className="text-[10px] font-extralight sm:text-xs">
+                {menu.engName}
+              </p>
+              <p className="text-[10px] font-extralight sm:text-xs">
+                {menu.thaiName}
+              </p>
+            </Link>
+          ))}
         </div>
         <div className="pt-5">
           <div>Main Dish</div>
@@ -55,26 +83,15 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
 
 export default Mock;
 
-export async function getServerSideProps() {
-  console.log(menus);
-  const imageSrc =
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
+export function getStaticProps() {
+  const imageSrc = env.CLOUDFRONT_URL;
   const menusWithImage = menus.map((menu) => {
     const menuWithImage: ImageProps = {
       ...menu,
-      imageSrc: `${imageSrc}/${menu.id}.png`,
+      imageSrc: `${imageSrc}/${menu.id}.jpg`,
     };
     return menuWithImage;
   });
-  const generateBlurUrl = menusWithImage.map(async (mwi) => {
-    return getBase64ImageUrl(mwi);
-  });
-  console.log("+++++++++++++++menu+++++++++++++++++++++", menusWithImage);
-  const blurDataUrls = await Promise.all(generateBlurUrl);
-
-  for (let i = 0; i < menusWithImage.length; i++) {
-    menusWithImage[i].blurDataUrl = blurDataUrls[i];
-  }
   return {
     props: {
       images: menusWithImage,

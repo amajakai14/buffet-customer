@@ -26,6 +26,7 @@ const config = {
       "profile.line-scdn.net",
       "images.unsplash.com",
       "raw.githubusercontent.com",
+      "d1xgtoppp2m1fw.cloudfront.net",
     ],
   },
 };
