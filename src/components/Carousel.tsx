@@ -2,7 +2,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Modal from "./Modal";
 
-export default function Carousel() {
+export default function Carousel({
+  index,
+  currentPhoto,
+}: {
+  index: number;
+  currentPhoto: { blurDataUrl: string };
+}) {
   const router = useRouter();
 
   async function closeModal() {
@@ -12,10 +18,6 @@ export default function Carousel() {
   function changePhotoId(newVal: number) {
     return newVal;
   }
-
-  useKeypress("Escape", () => {
-    closeModal();
-  });
 
   return (
     <div className="fixed inset-0 flex items-center justify-center">
