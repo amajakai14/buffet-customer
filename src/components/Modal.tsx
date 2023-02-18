@@ -55,6 +55,10 @@ export default function Modal({
   const [state, dispatch] = useReducer(reducer, { count: 0 });
 
   function handleClose() {
+    if (typeof photoId !== "string") {
+      onClose();
+      return;
+    }
     dispatch({ type: "reset" });
     setLastViewedPhoto(photoId);
     router.push("/mock", undefined, { shallow: true });
@@ -88,6 +92,7 @@ export default function Modal({
     },
     trackMouse: true,
   });
+  if (!currentPhoto) return <div>Not Found</div>;
 
   return (
     <>

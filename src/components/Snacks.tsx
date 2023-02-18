@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { TMenu } from "../mock/menu";
 
-const Snacks = ({ menus }: { menus: TMenu }) => {
+const Snacks = ({ menus }: { menus: TMenu[] }) => {
   return (
     <div className="grid grid-cols-2 gap-y-4 pt-5">
       {menus.map((menu) => (

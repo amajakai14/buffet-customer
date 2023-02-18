@@ -106,13 +106,17 @@ export async function getServerSideProps() {
   });
   console.log("+++++++++++++++menu+++++++++++++++++++++", menusWithImage);
   const blurDataUrls = await Promise.all(generateBlurUrl);
+  const result: ImageProps[] = [];
+  menusWithImage.forEach((menu, index) => {
+    result.push({ ...menu, blurDataUrl: blurDataUrls[index] });
+  });
 
-  for (let i = 0; i < menusWithImage.length; i++) {
-    menusWithImage[i].blurDataUrl = blurDataUrls[i];
-  }
+  // for (let i = 0; i < menusWithImage.length; i++) {
+  //   if (menusWithImage[i] ) menusWithImage[i].blurDataUrl = blurDataUrls[i];
+  // }
   return {
     props: {
-      images: menusWithImage,
+      images: result,
     },
   };
 }
