@@ -46,7 +46,11 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
           }}
         />
       )}
-      <div className="ml-24 h-screen px-4 pt-5 text-sm font-light">
+      <div
+        className={`ml-24 h-screen px-4 pt-5 text-sm font-light ${
+          photoId ? "bg-slate-300" : ""
+        }`}
+      >
         <div>
           <div>Recommend</div>
           <Recommend menus={recommend} />

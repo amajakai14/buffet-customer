@@ -1,7 +1,13 @@
+import { useRouter } from "next/router";
+
 export default function Sidebar() {
+  const router = useRouter();
+  const { photoId } = router.query as { photoId: string };
   return (
-    <div className="fixed w-24">
-      <div className="flex h-screen flex-col bg-white px-2 py-5 shadow">
+    <div
+      className={`fixed top-0 w-24 ${photoId ? "bg-slate-300" : "bg-white"}`}
+    >
+      <div className="flex h-screen flex-col px-2 py-5 shadow">
         <div>
           <div className="pb-4">
             <h2 className="text-xs font-extralight">Means Restaurant</h2>

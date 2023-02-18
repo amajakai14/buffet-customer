@@ -103,7 +103,7 @@ export default function Modal({
           onClose={handleClose}
           {...handlers}
         >
-          <div className="fixed bottom-0 min-w-full overflow-y-auto ">
+          <div className="fixed bottom-0 min-w-full overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <Transition.Child
                 as={Fragment}
