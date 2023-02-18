@@ -1,11 +1,12 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import MainDish from "../components/MainDish";
 import Modal from "../components/Modal";
 import Recommend from "../components/Recommend";
 import Sidebar from "../components/Sidebar";
 import { menus, menuType, TMenu } from "../mock/menu";
 import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
+import { useLastViewedImage } from "../utils/useLastViewedPhoto";
 
 // type of menu and add blurDataUrl property
 export interface ImageProps extends TMenu {
@@ -15,8 +16,19 @@ export interface ImageProps extends TMenu {
 
 const Mock = ({ images }: { images: ImageProps[] }) => {
   const router = useRouter();
-  const { photoId } = router.query;
-  const [openModal, setOpenModal] = useState(false);
+  const { photoId } = router.query as { photoId: string };
+  const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedImage();
+  const lastViewedImageRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (lastViewedPhoto && !photoId) {
+      lastViewedImageRef.current?.scrollIntoView({
+        block: "center",
+      });
+      setLastViewedPhoto(null);
+    }
+  }, [lastViewedPhoto, photoId, setLastViewedPhoto]);
+
   if (!images) return <div>Not found</div>;
   const recommend = images.filter((menu) => menu.type === menuType.RECOMMEND);
   const mainDish = images.filter((menu) => menu.type === menuType.MAINDISH);
@@ -26,7 +38,14 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
   return (
     <div>
       <Sidebar />
-      <Modal />
+      {photoId && (
+        <Modal
+          images={images}
+          onClose={() => {
+            setLastViewedPhoto(photoId);
+          }}
+        />
+      )}
       <div className="ml-24 h-screen px-4 pt-5 text-sm font-light">
         <div>
           <div>Recommend</div>
@@ -34,19 +53,35 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
         </div>
         <div className="pt-5">
           <div>Main Dish</div>
-          <MainDish menus={mainDish} />
+          <MainDish
+            menus={mainDish}
+            lastViewedPhotoRef={lastViewedImageRef}
+            lastViewedPhoto={lastViewedPhoto}
+          />
         </div>
         <div className="pt-5">
           <div>Vegetables</div>
-          <MainDish menus={vegetables} />
+          <MainDish
+            menus={vegetables}
+            lastViewedPhotoRef={lastViewedImageRef}
+            lastViewedPhoto={lastViewedPhoto}
+          />
         </div>
         <div className="pt-5">
           <div>Snack & Others</div>
-          <MainDish menus={dessert} />
+          <MainDish
+            menus={dessert}
+            lastViewedPhotoRef={lastViewedImageRef}
+            lastViewedPhoto={lastViewedPhoto}
+          />
         </div>
         <div className="pt-5">
           <div>Drinks</div>
-          <MainDish menus={drinks} />
+          <MainDish
+            menus={drinks}
+            lastViewedPhotoRef={lastViewedImageRef}
+            lastViewedPhoto={lastViewedPhoto}
+          />
         </div>
       </div>
     </div>

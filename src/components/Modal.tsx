@@ -1,88 +1,159 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { Fragment, useReducer } from "react";
 import { useSwipeable } from "react-swipeable";
+import { ImageProps } from "../pages/mock";
+import { useLastViewedImage } from "../utils/useLastViewedPhoto";
+import Cart from "./icons/Cart";
+import Minus from "./icons/Minus";
+import Plus from "./icons/Plus";
 
-export default function Modal() {
-  const [isOpen, setIsOpen] = useState(true);
+type STATE = {
+  count: number;
+};
 
-  function closeModal() {
-    setIsOpen(false);
+type ACTION = {
+  type: "increment" | "decrement" | "reset";
+};
+
+function reducer(state: STATE, action: ACTION) {
+  switch (action.type) {
+    case "increment":
+      return {
+        count: state.count++,
+      };
+    case "decrement":
+      if (state.count === 0) return { count: 0 };
+      else {
+        return {
+          count: state.count--,
+        };
+      }
+    case "reset":
+      return {
+        count: 0,
+      };
+    default:
+      return state;
   }
+}
 
-  function openModal() {
-    setIsOpen(true);
+export default function Modal({
+  images,
+  onClose,
+}: {
+  images: ImageProps[];
+  onClose: () => void;
+}) {
+  const router = useRouter();
+
+  const { photoId } = router.query;
+  const index = Number(photoId);
+
+  const [, setLastViewedPhoto] = useLastViewedImage();
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  function handleClose() {
+    dispatch({ type: "reset" });
+    setLastViewedPhoto(photoId);
+    router.push("/mock", undefined, { shallow: true });
+    onClose();
+  }
+  const currentPhoto = images?.find((image) => image.id === index);
+
+  function changePhotoId(newVal: number) {
+    return newVal;
   }
 
   const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (index < images?.length - 1) {
+        dispatch({ type: "reset" });
+        router.push(`/mock?photoId=${index + 1}`, `/mock/p/${index + 1}`, {
+          shallow: true,
+        });
+      }
+    },
+    onSwipedRight: () => {
+      if (index > 0) {
+        dispatch({ type: "reset" });
+        router.push(`/mock?photoId=${index - 1}`, `/mock/p/${index - 1}`, {
+          shallow: true,
+        });
+      }
+    },
     onSwipedDown: () => {
-      setIsOpen(false);
+      handleClose();
     },
     trackMouse: true,
   });
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          Open dialog
-        </button>
-      </div>
-
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={true} as={Fragment}>
         <Dialog
           as="div"
           className="fixed z-10"
-          onClose={closeModal}
+          onClose={handleClose}
           {...handlers}
         >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-500"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed  bottom-0 overflow-y-auto">
+          <div className="fixed bottom-0 min-w-full overflow-y-auto ">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <Transition.Child
                 as={Fragment}
-                enter="ease-out duration-500"
-                enterFrom="opacity-0 scale-95 translate-y-1/2"
+                enter="ease-in-out duration-500"
+                enterFrom="opacity-0 scale-95"
                 enterTo="opacity-100 scale-100"
                 leave="ease-in duration-500"
-                leaveFrom="opacity-100 scale-100 "
-                leaveTo="opacity-0 scale-95 translate-y-[100%]"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="min-h-[70vh] w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-center text-lg font-medium leading-6 text-gray-900"
                   >
-                    Payment successful
+                    {currentPhoto?.engName}
                   </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Your payment has been successfully submitted. We’ve sent
-                      you an email with all of the details of your order.
-                    </p>
+                  <p className="text-center text-sm text-gray-500">
+                    {currentPhoto?.thaiName}
+                  </p>
+                  <div className="flex items-center justify-center">
+                    <Image
+                      src={currentPhoto.imageSrc}
+                      alt="image"
+                      width={200}
+                      height={200}
+                    />
                   </div>
-
                   <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
-                    >
-                      Got it, thanks!
+                    <div className="flex justify-center gap-6">
+                      <button
+                        className="active:bg-slate-300"
+                        onClick={() => {
+                          dispatch({ type: "increment" });
+                        }}
+                      >
+                        <Plus />
+                      </button>
+                      <div className="flex items-center justify-center">
+                        <p>{state?.count}</p>
+                      </div>
+                      <button
+                        className="active:bg-slate-300"
+                        onClick={() => {
+                          dispatch({ type: "decrement" });
+                        }}
+                      >
+                        <Minus />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex justify-center">
+                    <button className="flex justify-center gap-3 rounded-md p-3 hover:bg-slate-300">
+                      <p>Add to cart</p>
+                      <Cart />
                     </button>
                   </div>
                 </Dialog.Panel>

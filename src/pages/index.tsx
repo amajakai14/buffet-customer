@@ -1,8 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import Mock from "./mock";
-
 const Home: NextPage = () => {
   return (
     <>
@@ -12,7 +10,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Mock />
+        <div>Hello World</div>
       </main>
     </>
   );
