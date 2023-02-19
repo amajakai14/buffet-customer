@@ -4,6 +4,7 @@ import MainDish from "../components/MainDish";
 import Modal from "../components/Modal";
 import Recommend from "../components/Recommend";
 import Sidebar from "../components/Sidebar";
+import { env } from "../env.mjs";
 import { menus, menuType, TMenu } from "../mock/menu";
 import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
 import { useLastViewedImage } from "../utils/useLastViewedPhoto";
@@ -96,28 +97,25 @@ export default Mock;
 
 export async function getServerSideProps() {
   console.log(menus);
-  const imageSrc =
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
+  const imageSrc = env.CLOUDFRONT_URL;
   const menusWithImage = menus.map((menu) => {
     const menuWithImage: ImageProps = {
       ...menu,
-      imageSrc: `${imageSrc}/${menu.id}.png`,
+      imageSrc: `${imageSrc}/${menu.id}.jpg`,
     };
     return menuWithImage;
   });
+
   const generateBlurUrl = menusWithImage.map(async (mwi) => {
     return getBase64ImageUrl(mwi);
   });
-  console.log("+++++++++++++++menu+++++++++++++++++++++", menusWithImage);
+
   const blurDataUrls = await Promise.all(generateBlurUrl);
   const result: ImageProps[] = [];
   menusWithImage.forEach((menu, index) => {
     result.push({ ...menu, blurDataUrl: blurDataUrls[index] });
   });
 
-  // for (let i = 0; i < menusWithImage.length; i++) {
-  //   if (menusWithImage[i] ) menusWithImage[i].blurDataUrl = blurDataUrls[i];
-  // }
   return {
     props: {
       images: result,

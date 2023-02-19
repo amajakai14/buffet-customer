@@ -18,7 +18,6 @@ const MainDish = ({
         <Link
           key={menu.id}
           href={`/mock?photoId=${menu.id}`}
-          as={`/mock/p/${menu.id}`}
           shallow={true}
           ref={menu.id === Number(lastViewedPhoto) ? lastViewedPhotoRef : null}
         >

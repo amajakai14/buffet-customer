@@ -19,6 +19,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "framer-motion": "^9.0.4",
     "imagemin": "^8.0.1",
     "imagemin-jpegtran": "^7.0.0",
     "next": "13.1.6",
