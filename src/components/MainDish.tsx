@@ -27,7 +27,6 @@ const MainDish = ({
             width={102}
             height={61}
             className={`h-20 w-28 ${menu.available ? "" : "opacity-50"}`}
-            blurDataURL={menu.blurDataUrl}
           />
           <p className="text-[10px] font-extralight sm:text-xs">
             {menu.engName}

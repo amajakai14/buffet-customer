@@ -6,13 +6,11 @@ import Recommend from "../components/Recommend";
 import Sidebar from "../components/Sidebar";
 import { env } from "../env.mjs";
 import { menus, menuType, TMenu } from "../mock/menu";
-import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
 import { useLastViewedImage } from "../utils/useLastViewedPhoto";
 
 // type of menu and add blurDataUrl property
 export interface ImageProps extends TMenu {
   imageSrc: string;
-  blurDataUrl?: string;
 }
 
 const Mock = ({ images }: { images: ImageProps[] }) => {
@@ -106,19 +104,9 @@ export async function getServerSideProps() {
     return menuWithImage;
   });
 
-  const generateBlurUrl = menusWithImage.map(async (mwi) => {
-    return getBase64ImageUrl(mwi);
-  });
-
-  const blurDataUrls = await Promise.all(generateBlurUrl);
-  const result: ImageProps[] = [];
-  menusWithImage.forEach((menu, index) => {
-    result.push({ ...menu, blurDataUrl: blurDataUrls[index] });
-  });
-
   return {
     props: {
-      images: result,
+      images: menusWithImage,
     },
   };
 }
