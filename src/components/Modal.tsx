@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useReducer, useRef, useState } from "react";
 import { useSwipeable } from "react-swipeable";
-import { ImageProps } from "../pages/mock";
+import type { ImageProps } from "../pages/mock";
 import { useLastViewedImage } from "../utils/useLastViewedPhoto";
 import Cart from "./icons/Cart";
 import Minus from "./icons/Minus";
@@ -12,27 +12,35 @@ import Plus from "./icons/Plus";
 
 type STATE = {
   count: number;
+  currentPhoto: ImageProps | undefined;
 };
 
 type ACTION = {
   type: "increment" | "decrement" | "reset";
 };
 
-function reducer(state: STATE, action: ACTION) {
+function reducer(state: STATE, action: ACTION): STATE {
+  if (state.currentPhoto && !state.currentPhoto.available) {
+    return state;
+  }
+
   switch (action.type) {
     case "increment":
       return {
+        ...state,
         count: ++state.count,
       };
     case "decrement":
-      if (state.count === 0) return { count: 0 };
+      if (state.count === 0) return { ...state, count: 0 };
       else {
         return {
+          ...state,
           count: --state.count,
         };
       }
     case "reset":
       return {
+        ...state,
         count: 0,
       };
     default:
@@ -51,9 +59,13 @@ export default function Modal({
 
   const { photoId } = router.query;
   const index = Number(photoId);
+  const currentPhoto = images?.find((image) => image.id === index);
 
   const [, setLastViewedPhoto] = useLastViewedImage();
-  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  const [state, dispatch] = useReducer(reducer, {
+    count: 0,
+    currentPhoto,
+  });
   const [loaded, setLoaded] = useState(false);
   const [direction, setDirection] = useState(0);
   const overlayRef = useRef(null);
@@ -68,7 +80,6 @@ export default function Modal({
     router.push("/mock", undefined, { shallow: true });
     onClose();
   }
-  const currentPhoto = images?.find((image) => image.id === index);
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -159,6 +170,9 @@ export default function Modal({
                       height={300}
                       priority
                       onLoadingComplete={() => setLoaded(true)}
+                      className={`${
+                        currentPhoto.available ? "" : "opacity-50"
+                      }`}
                     />
                   </Dialog.Overlay>
                   <div className="mt-4">
