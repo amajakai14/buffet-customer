@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
+import Cart from "../components/Cart";
 import MainDish from "../components/MainDish";
 import Modal from "../components/Modal";
 import Recommend from "../components/Recommend";
@@ -87,6 +88,7 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
           />
         </div>
       </div>
+      <Cart />
     </div>
   );
 };

@@ -10,9 +10,9 @@ export default function Minus() {
       <path
         d="M7 12L17 12"
         stroke="#000000"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

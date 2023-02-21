@@ -6,7 +6,7 @@ import { useReducer, useRef, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import type { ImageProps } from "../pages/mock";
 import { useLastViewedImage } from "../utils/useLastViewedPhoto";
-import Cart from "./icons/Cart";
+import Cart from "./icons/CartIcon";
 import Minus from "./icons/Minus";
 import Plus from "./icons/Plus";
 
