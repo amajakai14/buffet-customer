@@ -50,6 +50,7 @@ model User {
   created_at     DateTime     @default(now())
   corporation_id String?
   accounts       Account[]
+  Cart           Cart[]
   sessions       Session[]
   Corporation    Corporation? @relation(fields: [corporation_id], references: [id], onDelete: Cascade)
 }
@@ -70,6 +71,7 @@ model Channel {
   status      String
   time_start  DateTime @default(now())
   time_end    DateTime
+  Cart        Cart[]
   Order       Order[]
 }
 
@@ -125,6 +127,7 @@ model Menu {
   created_at     DateTime       @default(now())
   updated_at     DateTime?
   corporation_id String
+  Cart           Cart[]
   CourseOnMenu   CourseOnMenu[]
   Corporation    Corporation    @relation(fields: [corporation_id], references: [id], onDelete: Cascade)
 }
@@ -139,4 +142,15 @@ model Order {
   updated_at   DateTime?
   channel_id   String
   Channel      Channel   @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id         Int     @id @default(autoincrement())
+  channel_id String
+  user_id    String
+  menu_id    Int
+  amount     Int
+  Channel    Channel @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  Menu       Menu    @relation(fields: [menu_id], references: [id], onDelete: Cascade)
+  User       User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
