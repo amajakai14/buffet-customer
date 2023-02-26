@@ -88,7 +88,7 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
           />
         </div>
       </div>
-      <Cart />
+      <Cart channelId="abc" menus={menus} />
     </div>
   );
 };

@@ -28,14 +28,14 @@ function reducer(state: STATE, action: ACTION): STATE {
     case "increment":
       return {
         ...state,
-        count: ++state.count,
+        count: state.count + 1,
       };
     case "decrement":
       if (state.count === 0) return { ...state, count: 0 };
       else {
         return {
           ...state,
-          count: --state.count,
+          count: state.count - 1,
         };
       }
     case "reset":
