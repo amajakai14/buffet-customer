@@ -9,9 +9,10 @@ import {
   GetCartSchema,
 } from "../services/cart.service";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { publicProcedure } from "./../trpc";
 
 export const cartRouter = createTRPCRouter({
-  getCart: protectedProcedure
+  getCart: publicProcedure
     .input(GetCartSchema)
     .query(async ({ ctx, input }) => {
       const result = await getCart(ctx.prisma, input);

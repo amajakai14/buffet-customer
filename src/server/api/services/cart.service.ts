@@ -6,6 +6,7 @@ export type getCartInput = z.TypeOf<typeof GetCartSchema>;
 
 export async function getCart(prisma: PrismaClient, input: getCartInput) {
   const { channel_id } = input;
+  return mockCarts;
   const cart: Cart[] | undefined = await prisma.cart.findMany({
     where: {
       channel_id,
@@ -13,6 +14,93 @@ export async function getCart(prisma: PrismaClient, input: getCartInput) {
   });
   return cart;
 }
+
+const mockCarts: Cart[] = [
+  {
+    id: 1,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 1,
+    amount: 1,
+  },
+  {
+    id: 2,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 2,
+    amount: 1,
+  },
+  {
+    id: 3,
+    user_id: "2",
+    channel_id: "1",
+    menu_id: 1,
+    amount: 1,
+  },
+  {
+    id: 4,
+    user_id: "3",
+    channel_id: "1",
+    menu_id: 1,
+    amount: 1,
+  },
+  {
+    id: 5,
+    user_id: "5",
+    channel_id: "1",
+    menu_id: 1,
+    amount: 1,
+  },
+  {
+    id: 6,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 3,
+    amount: 1,
+  },
+  {
+    id: 7,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 4,
+    amount: 1,
+  },
+  {
+    id: 8,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 5,
+    amount: 1,
+  },
+  {
+    id: 9,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 6,
+    amount: 1,
+  },
+  {
+    id: 10,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 7,
+    amount: 1,
+  },
+  {
+    id: 11,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 8,
+    amount: 1,
+  },
+  {
+    id: 12,
+    user_id: "1",
+    channel_id: "1",
+    menu_id: 9,
+    amount: 1,
+  },
+];
 
 export const AddToCartSchema = z.object({
   channel_id: z.string(),
