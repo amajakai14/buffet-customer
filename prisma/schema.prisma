@@ -134,7 +134,7 @@ model Menu {
 
 model Order {
   id           Int       @id @default(autoincrement())
-  menu_id      String
+  menu_id      Int
   order_amount Int
   total_price  Int
   process_type String

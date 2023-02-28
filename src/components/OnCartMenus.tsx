@@ -1,6 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { api } from "./../utils/api";
 import { DisplayMenus } from "./Cart";
 
 const OnCartMenus = ({
@@ -13,6 +14,28 @@ const OnCartMenus = ({
   menus: DisplayMenus[];
 }) => {
   const { t, i18n } = useTranslation("mock");
+  const mutate = api.order.add.useMutation({
+    onSuccess: () => {
+      handleClose();
+    },
+    onError: (error) => {
+      console.log(error.message);
+    },
+  });
+
+  async function handleAddOrder() {
+    const mutateMenus = menus.map((menu) => {
+      return {
+        menu_id: menu.id,
+        amount: menu.amount,
+      };
+    });
+    await mutate.mutateAsync({
+      channel_id: "1",
+      menus: mutateMenus,
+    });
+  }
+
   return (
     <MotionConfig
       transition={{
@@ -104,9 +127,7 @@ const OnCartMenus = ({
                     ))}
                 </Dialog.Overlay>
                 <Dialog.Overlay as={motion.div} className="pt-4 text-center">
-                  <button onClick={() => console.log("I'm clicked")}>
-                    Click Me
-                  </button>
+                  <button onClick={() => handleAddOrder()}>Submit Order</button>
                 </Dialog.Overlay>
               </Dialog.Panel>
             </div>

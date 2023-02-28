@@ -1,6 +1,7 @@
 import { cartRouter } from "./routers/cart";
 import { exampleRouter } from "./routers/example";
 import { menuRouter } from "./routers/menu";
+import { orderRouter } from "./routers/order";
 import { createTRPCRouter } from "./trpc";
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   menu: menuRouter,
   cart: cartRouter,
+  order: orderRouter,
 });
 
 // export type definition of API
