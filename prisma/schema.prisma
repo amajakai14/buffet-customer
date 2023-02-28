@@ -64,15 +64,16 @@ model VerificationToken {
 }
 
 model Channel {
-  id          String   @id @unique
-  table_id    Int
-  user_id     Int
-  course_name String
-  status      String
-  time_start  DateTime @default(now())
-  time_end    DateTime
-  Cart        Cart[]
-  Order       Order[]
+  id         String   @id @unique
+  table_id   Int
+  Desk       Desk     @relation(fields: [table_id], references: [id], onDelete: Cascade)
+  course_id  Int
+  Course     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  status     String
+  time_start DateTime @default(now())
+  time_end   DateTime
+  Cart       Cart[]
+  Order      Order[]
 }
 
 model Corporation {
@@ -96,6 +97,7 @@ model Course {
   corporation_id   String
   Corporation      Corporation    @relation(fields: [corporation_id], references: [id], onDelete: Cascade)
   CourseOnMenu     CourseOnMenu[]
+  Channel          Channel[]
 }
 
 model CourseOnMenu {
@@ -115,6 +117,7 @@ model Desk {
   is_occupied    Boolean
   corporation_id String
   Corporation    Corporation @relation(fields: [corporation_id], references: [id], onDelete: Cascade)
+  Channel        Channel[]
 }
 
 model Menu {
