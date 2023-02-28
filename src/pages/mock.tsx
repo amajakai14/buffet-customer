@@ -1,5 +1,7 @@
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
+import nextI18nConfig from "../../next-i18next.config.mjs";
 import Cart from "../components/Cart";
 import MainDish from "../components/MainDish";
 import Modal from "../components/Modal";
@@ -16,6 +18,7 @@ export interface ImageProps extends TMenu {
 
 const Mock = ({ images }: { images: ImageProps[] }) => {
   const router = useRouter();
+  console.log(router.locale);
   const { photoId } = router.query as { photoId: string };
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedImage();
   const lastViewedImageRef = useRef<HTMLAnchorElement>(null);
@@ -95,8 +98,7 @@ const Mock = ({ images }: { images: ImageProps[] }) => {
 
 export default Mock;
 
-export async function getServerSideProps() {
-  console.log(menus);
+export async function getServerSideProps({ locale }: { locale: string }) {
   const imageSrc = env.CLOUDFRONT_URL;
   const menusWithImage = menus.map((menu) => {
     const menuWithImage: ImageProps = {
@@ -108,6 +110,12 @@ export async function getServerSideProps() {
 
   return {
     props: {
+      ...(await serverSideTranslations(
+        locale,
+        ["common", "mock"],
+        nextI18nConfig,
+        ["en", "th"]
+      )),
       images: menusWithImage,
     },
   };
