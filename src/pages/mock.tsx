@@ -17,6 +17,9 @@ export interface ImageProps extends TMenu {
 }
 
 const Mock = ({ images }: { images: ImageProps[] }) => {
+  if (typeof window !== "undefined") {
+    console.log("preferred Language", navigator.language);
+  }
   const router = useRouter();
   console.log(router.locale);
   const { photoId } = router.query as { photoId: string };
