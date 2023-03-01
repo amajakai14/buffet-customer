@@ -13,6 +13,8 @@ export const AddOrderSchema = z.object({
 export type AddOrderInput = z.TypeOf<typeof AddOrderSchema>;
 
 export async function addOrder(prisma: PrismaClient, input: AddOrderInput) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return true;
   const { channel_id, menus } = input;
   try {
     await prisma.$transaction([
