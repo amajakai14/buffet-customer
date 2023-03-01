@@ -122,7 +122,8 @@ model Desk {
 
 model Menu {
   id             Int            @id @default(autoincrement())
-  menu_name      String
+  menu_name_th   String
+  menu_name_en   String
   menu_type      String
   price          Int            @default(0)
   available      Boolean        @default(true)
