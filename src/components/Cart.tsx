@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TMenu } from "../mock/menu";
+import type { TMenuWithUrl } from "../pages/test/[...slug]";
 import { api } from "../utils/api";
 import CartIcon from "./icons/CartIcon";
 import OnCartMenus from "./OnCartMenus";
@@ -12,18 +12,26 @@ export type DisplayMenus = {
   userId: string[];
 };
 
-const Cart = ({ channelId, menus }: { channelId: string; menus: TMenu[] }) => {
+const Cart = ({
+  channelId,
+  menus,
+}: {
+  channelId: string;
+  menus: TMenuWithUrl[];
+}) => {
   const [show, setShow] = useState(false);
   const fetchData = api.cart.getCart.useQuery({ channel_id: channelId });
 
   function handleClose() {
     setShow(false);
+    fetchData.refetch();
   }
 
-  const fetchedMenus = fetchData.data?.result;
+  let fetchedMenus = fetchData.data?.result;
   const displayMenus: DisplayMenus[] = [];
 
-  if (!fetchedMenus) return <></>;
+  if (fetchData.isLoading) return <>Loading...</>;
+  if (!fetchedMenus) fetchedMenus = [];
 
   fetchedMenus.map((fetchedMenu) => {
     const index = displayMenus.findIndex(
@@ -33,9 +41,11 @@ const Cart = ({ channelId, menus }: { channelId: string; menus: TMenu[] }) => {
       displayMenus.push({
         id: fetchedMenu.menu_id,
         engName:
-          menus.find((menu) => menu.id === fetchedMenu.menu_id)?.engName || "",
+          menus.find((menu) => menu.id === fetchedMenu.menu_id)?.menu_name_en ||
+          "",
         thaiName:
-          menus.find((menu) => menu.id === fetchedMenu.menu_id)?.thaiName || "",
+          menus.find((menu) => menu.id === fetchedMenu.menu_id)?.menu_name_th ||
+          "",
         amount: 1,
         userId: [fetchedMenu.user_id],
       });

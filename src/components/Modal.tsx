@@ -4,15 +4,15 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useReducer, useRef, useState } from "react";
 import { useSwipeable } from "react-swipeable";
-import type { ImageProps } from "../pages/mock";
+import { TMenuWithUrl } from "../pages/test/[...slug]";
 import { useLastViewedImage } from "../utils/useLastViewedPhoto";
-import Cart from "./icons/CartIcon";
-import Minus from "./icons/Minus";
-import Plus from "./icons/Plus";
+import CartIcon from "./icons/CartIcon";
+import MinusIcon from "./icons/Minus";
+import PlusIcon from "./icons/Plus";
 
 type STATE = {
   count: number;
-  currentPhoto: ImageProps | undefined;
+  currentPhoto: TMenuWithUrl | undefined;
 };
 
 type ACTION = {
@@ -52,7 +52,7 @@ export default function Modal({
   images,
   onClose,
 }: {
-  images: ImageProps[];
+  images: TMenuWithUrl[];
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -80,13 +80,15 @@ export default function Modal({
     router.push("/mock", undefined, { shallow: true });
     onClose();
   }
+  const currentPath = router.asPath;
+  const locale = router.locale;
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (index < images?.length - 1) {
         setDirection(1);
         dispatch({ type: "reset" });
-        router.push(`/mock?photoId=${index + 1}`, undefined, {
+        router.push(`${currentPath}?photoId=${index + 1}`, undefined, {
           shallow: true,
         });
       }
@@ -150,10 +152,14 @@ export default function Modal({
                       animationDuration: "0.5s",
                     }}
                   >
-                    {currentPhoto?.engName}
+                    {locale === "th"
+                      ? currentPhoto?.menu_name_en
+                      : currentPhoto?.menu_name_th}
                   </Dialog.Title>
                   <p className="text-center text-sm text-gray-500">
-                    {currentPhoto?.thaiName}
+                    {locale === "th"
+                      ? currentPhoto?.menu_name_th
+                      : currentPhoto?.menu_name_en}
                   </p>
                   <Dialog.Overlay
                     className="flex items-center justify-center"
@@ -164,7 +170,7 @@ export default function Modal({
                     exit={{ x: exit, opacity: 0 }}
                   >
                     <Image
-                      src={currentPhoto.imageSrc}
+                      src={currentPhoto.url}
                       alt="some image"
                       width={300}
                       height={300}
@@ -183,7 +189,7 @@ export default function Modal({
                           dispatch({ type: "increment" });
                         }}
                       >
-                        <Plus />
+                        <PlusIcon />
                       </button>
                       <div className="flex items-center justify-center">
                         <p>{state?.count}</p>
@@ -194,14 +200,14 @@ export default function Modal({
                           dispatch({ type: "decrement" });
                         }}
                       >
-                        <Minus />
+                        <MinusIcon />
                       </button>
                     </div>
                   </div>
                   <div className="flex justify-center">
                     <button className="flex justify-center gap-3 rounded-md p-3 hover:bg-slate-300">
                       <p>Add to cart</p>
-                      <Cart />
+                      <CartIcon />
                     </button>
                   </div>
                 </Dialog.Panel>
