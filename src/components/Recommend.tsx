@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { TMenuWithUrl } from "../pages/test/[...slug]";
+import type { TMenuWithUrl } from "../pages/test/[...slug]";
 
 const Recommend = ({ menus }: { menus: TMenuWithUrl[] }) => {
-  const first = menus[0]!;
-  const second = menus[1]!;
+  const first = menus[0];
+  const second = menus[1];
+  if (!first || !second) return <div>Not Found</div>;
   return (
     <>
       <div className="flex justify-between pt-4">
