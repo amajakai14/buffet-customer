@@ -1,40 +1,27 @@
+import { z } from "zod";
 import { env } from "../../../env.mjs";
-import { getMenuSchema } from "../../../schema/menu.schema";
+import * as channelRepository from "../repository/channel.repository";
+import * as menuRepository from "../repository/menu.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+
+export const getMenuSchema = z.object({
+  corporation_id: z.string(),
+  channel_id: z.string(),
+});
 
 export const menuRouter = createTRPCRouter({
   get: protectedProcedure.input(getMenuSchema).query(async ({ ctx, input }) => {
     const { corporation_id, channel_id } = input;
-    const channel = await ctx.prisma.channel.findFirst({
-      where: { id: channel_id },
-    });
+
+    const channel = await channelRepository.getChannel(ctx.prisma, channel_id);
     if (!channel) return null;
-    const course = await ctx.prisma.course.findFirst({
-      where: { course_name: channel.course_name },
-    });
-    if (!course) return null;
 
-    const x = await ctx.prisma.menu.findMany({
-      where: { corporation_id },
-      include: {
-        CourseOnMenu: {
-          where: { course_id: course.id },
-          select: {
-            menu_id: true,
-          },
-        },
-      },
-      orderBy: {
-        id: "asc",
-      },
-    });
-    console.log("all menus", x);
-    //fileter x that doesn't have menu_id in course_on_menu
-    const menus = x.filter((menu) => {
-      return menu.CourseOnMenu.length > 0;
-    });
+    const availableMenu = await menuRepository.getAvailableMenu(
+      ctx.prisma,
+      channel.course_id
+    );
 
-    const transform = menus.map((menu) => {
+    const transform = availableMenu.map((menu) => {
       let url = env.CLOUDFRONT_URL + corporation_id + "/" + menu.id.toString();
       if (!menu.hasImage) url = env.CLOUDFRONT_URL + "noimage.jpeg";
       return {

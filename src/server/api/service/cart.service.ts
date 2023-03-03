@@ -23,7 +23,7 @@ export async function addMenuService(
   prisma: PrismaClient,
   user_id: string,
   input: addToCartInput
-) {
+): Promise<Cart> {
   const { channel_id, menu_id, amount } = input;
   const exist = await prisma.cart.findFirst({
     where: {
@@ -57,7 +57,7 @@ export async function addMenuService(
 export async function deleteMenusService(
   prisma: PrismaClient,
   input: deleteFromCartInput
-) {
+): Promise<void> {
   const { channel_id, menu_id } = input;
   await prisma.cart.deleteMany({
     where: {
@@ -70,7 +70,7 @@ export async function deleteMenusService(
 export async function deleteCartService(
   prisma: PrismaClient,
   input: deleteCartInput
-) {
+): Promise<void> {
   const { channel_id } = input;
   await prisma.cart.deleteMany({
     where: {

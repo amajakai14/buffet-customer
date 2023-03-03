@@ -11,7 +11,7 @@ import {
   deleteCartService,
   deleteMenusService,
   getCartService,
-} from "../services/cart.service";
+} from "../service/cart.service";
 
 export const getCart: GetCart = getCartService;
 

@@ -1,10 +1,5 @@
 import z from "zod";
-import {
-  addMenu,
-  deleteCart,
-  deleteMenus,
-  getCart,
-} from "../repository/cart.repository";
+import * as repository from "../repository/cart.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { publicProcedure } from "./../trpc";
 export const GetCartSchema = z.object({ channel_id: z.string() });
@@ -28,7 +23,7 @@ export const cartRouter = createTRPCRouter({
   getCart: publicProcedure
     .input(GetCartSchema)
     .query(async ({ ctx, input }) => {
-      const result = await getCart(ctx.prisma, input);
+      const result = await repository.getCart(ctx.prisma, input);
       return {
         result,
       };
@@ -37,7 +32,11 @@ export const cartRouter = createTRPCRouter({
   addMenu: protectedProcedure
     .input(AddToCartSchema)
     .mutation(async ({ ctx, input }) => {
-      const result = await addMenu(ctx.prisma, ctx.session.user.id, input);
+      const result = await repository.addMenu(
+        ctx.prisma,
+        ctx.session.user.id,
+        input
+      );
       return {
         result,
       };
@@ -46,12 +45,12 @@ export const cartRouter = createTRPCRouter({
   deleteMenu: protectedProcedure
     .input(DeleteFromCartSchema)
     .mutation(async ({ ctx, input }) => {
-      await deleteMenus(ctx.prisma, input);
+      await repository.deleteMenus(ctx.prisma, input);
     }),
 
   deleteCart: protectedProcedure
     .input(z.object({ channel_id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      await deleteCart(ctx.prisma, input);
+      await repository.deleteCart(ctx.prisma, input);
     }),
 });

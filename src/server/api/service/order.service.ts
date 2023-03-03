@@ -1,20 +1,10 @@
 import type { PrismaClient } from "@prisma/client";
-import { z } from "zod";
+import type { addOrderInput } from "../repository/order.repository";
 
-export const AddOrderSchema = z.object({
-  channel_id: z.string(),
-  menus: z.array(
-    z.object({
-      menu_id: z.number(),
-      amount: z.number().positive(),
-    })
-  ),
-});
-export type AddOrderInput = z.TypeOf<typeof AddOrderSchema>;
-
-export async function addOrder(prisma: PrismaClient, input: AddOrderInput) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return true;
+export async function addOrderService(
+  prisma: PrismaClient,
+  input: addOrderInput
+): Promise<boolean> {
   const { channel_id, menus } = input;
   try {
     await prisma.$transaction([
