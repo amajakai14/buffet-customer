@@ -1,15 +1,28 @@
 import z from "zod";
 import {
   addMenu,
-  AddToCartSchema,
   deleteCart,
-  DeleteFromCartSchema,
   deleteMenus,
   getCart,
-  GetCartSchema,
-} from "../services/cart.service";
+} from "../repository/cart.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { publicProcedure } from "./../trpc";
+export const GetCartSchema = z.object({ channel_id: z.string() });
+
+export const AddToCartSchema = z.object({
+  channel_id: z.string(),
+  menu_id: z.number(),
+  amount: z.number().positive(),
+});
+
+export const DeleteCartSchema = z.object({
+  channel_id: z.string(),
+});
+
+export const DeleteFromCartSchema = z.object({
+  channel_id: z.string(),
+  menu_id: z.number(),
+});
 
 export const cartRouter = createTRPCRouter({
   getCart: publicProcedure
@@ -24,7 +37,7 @@ export const cartRouter = createTRPCRouter({
   addMenu: protectedProcedure
     .input(AddToCartSchema)
     .mutation(async ({ ctx, input }) => {
-      addMenu(ctx.session.user.id, ctx.prisma, input);
+      addMenu(ctx.prisma, ctx.session.user.id, input);
     }),
 
   deleteMenu: protectedProcedure
