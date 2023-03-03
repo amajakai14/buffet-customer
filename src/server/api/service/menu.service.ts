@@ -1,5 +1,6 @@
 import type { Menu, PrismaClient } from "@prisma/client";
 import { env } from "../../../env.mjs";
+import { MenuWithUrl } from "../repository/menu.repository.js";
 
 export async function getAvailableMenuService(
   prisma: PrismaClient,
@@ -21,7 +22,7 @@ export async function getAvailableMenuService(
   return menus;
 }
 
-export function addMenuImageURLService(menus: Menu[]) {
+export function addMenuImageURLService(menus: Menu[]): MenuWithUrl[] {
   return menus.map((menu) => {
     let url =
       env.CLOUDFRONT_URL + menu.corporation_id + "/" + menu.id.toString();
