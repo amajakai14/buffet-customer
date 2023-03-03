@@ -37,7 +37,10 @@ export const cartRouter = createTRPCRouter({
   addMenu: protectedProcedure
     .input(AddToCartSchema)
     .mutation(async ({ ctx, input }) => {
-      addMenu(ctx.prisma, ctx.session.user.id, input);
+      const result = await addMenu(ctx.prisma, ctx.session.user.id, input);
+      return {
+        result,
+      };
     }),
 
   deleteMenu: protectedProcedure
